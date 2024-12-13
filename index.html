@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUItopia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .game-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex-grow: 1;
+            padding: 10px;
+            text-align: center;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .tab.active {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .resource-item, .block-item, .recipe-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .resource-item img, .block-item img, .recipe-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        #resources-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .resource-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            height: 100px;
+        }
+
+        .resource-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-bottom: 5px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .resource-item .resource-name {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            margin-bottom: 2px;
+        }
+
+        .resource-item .resource-amount {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            width: 0;
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.1s linear;
+        }
+        button {
+            margin-left: auto;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #crafting-search {
+            display: none;
+            margin-bottom: 15px;
+            padding: 0 20px;
+        }   
+        #recipe-search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .block-item .pack-purchase-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-left: auto;
+            }
+
+            .block-item .gem-cost {
+                font-weight: bold;
+                color: blue;
+                white-space: nowrap;
+            }
+
+            #gem-balance {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="gem-balance" style="position: absolute; top: 10px; left: 10px; font-size: 20px; font-weight: bold;">
+            💎 Gems: 0
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="resources">Resources</div>
+            <div class="tab" data-tab="blocks">Blocks</div>
+            <div class="tab" data-tab="crafting">Crafting</div>
+            <div class="tab" data-tab="shop">Shop</div>
+            <div class="tab" data-tab="collections">Collections</div>
+        </div>
+
+        <div id="resources" class="tab-content active">
+            <h2>Inventory</h2>
+            <div id="resources-list"></div>
+        </div>
+
+        <div id="blocks" class="tab-content">
+            <h2>Breakable Blocks</h2>
+            <div id="blocks-list"></div>
+        </div>
+
+        <div id="crafting-search" class="search-container" style="display: none;">
+            <input type="text" id="recipe-search-input" placeholder="Search recipes...">
+        </div>
+
+        <div id="crafting" class="tab-content">
+            <h2>Crafting Recipes</h2>
+            <div id="crafting-list"></div>
+        </div>
+
+        <div id="shop" class="tab-content">
+            <h2>Shop Packs</h2>
+            <div id="shop-list"></div>
+        </div>
+
+        <div id="collections" class="tab-content">
+            <h2>Collections</h2>
+            <div id="collections-list"></div>
+        </div>
+    </div>
+
+    <script src="initialBlocks.js"></script>
+    <script src="initialResources.js"></script>
+    <script src="initialRecipes.js"></script>
+    <script src="initialShopPacks.js"></script>
+    <script src="initialCollections.js"></script>
+
+    <script>
+        // Game Configuration
+        const INITIAL_GEMS = 0;
+
+        // Rarity color mapping
+        const RARITY_COLORS = {
+            'common': '#AAAAAA',     // Grey
+            'uncommon': '#00FF00',   // Green
+            'rare': '#0096FF',       // Blue
+            'epic': '#800080',        // Purple
+            'legendary': '#FFD700',   // Yellow
+            'mythic': '#FF0000',      // Red
+            'exotic': '#FF69B4',      // Pink
+            'ancient': '#8B4513'      // Brown
+        };
+
+        // Game State
+        class ResourceGatheringGame {
+            constructor() {
+                this.level = 0;
+                this.loadGameState();
+                this.initEventListeners();
+                this.updateUI();
+            }
+
+            loadGameState() {
+                // Try to load from localStorage, if not available use initial state
+                const savedResources = localStorage.getItem('gameResources');
+                const savedBlockBreakingProgress = localStorage.getItem('gameBlockBreakingProgress');
+                const savedGems = localStorage.getItem('gameGems');
+                this.gems = savedGems ? parseInt(savedGems, 10) : INITIAL_GEMS;
+
+                // Create a merged resources object that includes both saved and new initial resources
+                const mergedResources = { ...JSON.parse(JSON.stringify(INITIAL_RESOURCES)) };
+
+                if (savedResources) {
+                    const parsedSavedResources = JSON.parse(savedResources);
+        
+                    console.log('Parsed Saved Resources:', parsedSavedResources);
+
+                    Object.entries(parsedSavedResources).forEach(([resourceName, savedResource]) => {
+                        console.log(`Processing resource: ${resourceName}`);
+            
+                        if (mergedResources[resourceName]) {
+                            console.log(`Updating existing resource: ${resourceName}`);
+                            mergedResources[resourceName] = {
+                                ...mergedResources[resourceName],
+                                amount: savedResource.amount
+                            };
+                        } else {
+                            console.log(`Adding new resource: ${resourceName}`);
+                            mergedResources[resourceName] = savedResource;
+                        }
+                    });
+                }
+
+                 // Force save to update localStorage with new resources
+                localStorage.setItem('gameResources', JSON.stringify(mergedResources));
+
+                console.log('Final Merged Resources:', mergedResources);
+
+                this.resources = mergedResources;
+
+                this.resources = savedResources 
+                    ? JSON.parse(savedResources) 
+                    : JSON.parse(JSON.stringify(INITIAL_RESOURCES));
+
+                this.blocks = JSON.parse(JSON.stringify(INITIAL_BLOCKS));
+                this.recipes = JSON.parse(JSON.stringify(INITIAL_RECIPES));
+                this.shopPacks = JSON.parse(JSON.stringify(INITIAL_SHOP_PACKS));
+
+                this.blockBreakingProgress = savedBlockBreakingProgress 
+                    ? JSON.parse(savedBlockBreakingProgress) 
+                    : {};
+
+                const savedLevel = localStorage.getItem('gameLevel');
+                this.level = savedLevel ? parseInt(savedLevel, 10) : 0;
+
+                // Create a merged collections object that includes both saved and new initial collections
+                const mergedCollections = { ...JSON.parse(JSON.stringify(INITIAL_COLLECTIONS)) };
+
+                const savedCollections = localStorage.getItem('gameCollections');
+                if (savedCollections) {
+                    const parsedSavedCollections = JSON.parse(savedCollections);
+
+                    Object.entries(parsedSavedCollections).forEach(([collectionId, savedCollection]) => {
+                        if (mergedCollections[collectionId]) {
+                            // Update existing collection's completed status
+                            mergedCollections[collectionId].completed = savedCollection.completed;
+                        } else {
+                            // Add new collections that might have been manually added to saved state
+                            mergedCollections[collectionId] = savedCollection;
+                        }
+                    });
+                }
+
+                // Force save to update localStorage with new collections
+                localStorage.setItem('gameCollections', JSON.stringify(mergedCollections));
+
+                // Set the game's collections to the merged collections
+                this.collections = mergedCollections;
+
+            }
+
+            saveGameState() {
+                // First, ensure we have the latest resources from INITIAL_RESOURCES
+                const mergedResources = { ...JSON.parse(JSON.stringify(INITIAL_RESOURCES)) };
+    
+                // Preserve existing amounts from current game state
+                Object.entries(this.resources).forEach(([resourceName, resource]) => {
+                    if (mergedResources[resourceName]) {
+                        mergedResources[resourceName].amount = resource.amount;
+                    } else {
+                        // If a resource exists in game state but not in initial resources, keep it
+                        mergedResources[resourceName] = resource;
+                    }
+                });
+
+                // Save the merged resources
+                localStorage.setItem('gameGems', this.gems);
+                localStorage.setItem('gameResources', JSON.stringify(mergedResources));
+                localStorage.setItem('gameBlockBreakingProgress', JSON.stringify(this.blockBreakingProgress));
+                localStorage.setItem('gameLevel', this.level);
+                localStorage.setItem('gameCollections', JSON.stringify(this.collections));
+            }
+
+            initEventListeners() {
+                // Tab switching
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                        
+                        tab.classList.add('active');
+                        document.getElementById(tab.dataset.tab).classList.add('active');
+
+                        // Show/hide recipe search based on active tab
+                        const recipeSearch = document.getElementById('crafting-search');
+                        recipeSearch.style.display = tab.dataset.tab === 'crafting' ? 'block' : 'none';
+                    });
+                });
+
+                // Add recipe search listener
+                const recipeSearchInput = document.getElementById('recipe-search-input');
+                recipeSearchInput.addEventListener('input', () => {
+                    const searchTerm = recipeSearchInput.value.toLowerCase();
+                    this.renderCrafting(searchTerm);
+                });
+
+                // Render blocks and add break button listeners
+                this.renderBlocks();
+                this.renderCrafting();
+                this.renderShop();
+                this.renderCollections();
+            }
+
+            renderShop() {
+                const shopList = document.getElementById('shop-list');
+                shopList.innerHTML = '';
+
+                Object.entries(this.shopPacks).forEach(([name, pack]) => {
+                    const packItem = document.createElement('div');
+                    packItem.className = 'block-item'; // Reuse block-item styling
+
+                    const contentHTML = pack.content.map(content => {
+                        const contentResource = this.resources[content.resource];
+                        return contentResource ? `
+                            <img src="${contentResource.image}" alt="${content.resource}" style="width: 25px; height: 25px;">
+                        ` : '';
+                    }).join('');
+
+                    packItem.innerHTML = `
+                        <img src="${pack.image}" alt="${name}">
+                        <div>
+                            <span>${pack.name}</span>
+                            <div>Content: ${contentHTML}</div>
+                        </div>
+                        <div class="pack-purchase-container">
+                            <div class="gem-cost">💎 ${pack.gemCost}</div>
+                            <button onclick="game.buyPack('${pack.id}')" 
+                                ${this.gems < pack.gemCost ? 'disabled' : ''}>
+                                Buy
+                            </button>
+                        </div>
+                    `;
+                    shopList.appendChild(packItem);
+                });
+            }
+
+            buyPack(packId) {
+                const pack = Object.values(this.shopPacks).find(p => p.id === packId);
+                if (pack && this.gems >= pack.gemCost) {
+                    // Deduct gems
+                    this.gems -= pack.gemCost;
+
+                    // Add pack contents based on chance
+                    pack.content.forEach(content => {
+                        if (Math.random() < content.chance) {
+                            this.resources[content.resource].amount += content.amount;
+                        }
+                    });
+
+                    this.updateUI();
+                    this.saveGameState();
+                }
+            }
+
+            playAudio(file) {
+                const audio = new Audio(file);
+                audio.volume = 0.1;
+                audio.play();
+            }
+
+            renderCollections() {
+                const collectionsList = document.getElementById('collections-list');
+                collectionsList.innerHTML = '';
+
+                // Count completed and total collections
+                const totalCollections = Object.keys(this.collections).length;
+                const completedCollections = Object.values(this.collections).filter(collection => collection.completed).length;
+
+                // Modify the preceding sibling (the h2) to include the count
+                const collectionsHeader = document.querySelector('#collections h2');
+                collectionsHeader.innerHTML = `Collections 
+                    <span style="color: #666; font-size: 0.6em; margin-left: 10px;">
+                        ${completedCollections}/${totalCollections}
+                    </span>`;
+
+                Object.entries(this.collections).forEach(([id, collection]) => {
+                    const collectionItem = document.createElement('div');
+                    collectionItem.className = 'block-item'; // Reuse existing styling
+
+                    // Check if collection can be completed
+                    const canComplete = collection.requiredResources.every(req => 
+                        (this.resources[req.resource]?.amount || 0) >= req.amount
+                    );
+
+                    const requiredResourcesHTML = collection.requiredResources.map(req => {
+                        const resource = this.resources[req.resource];
+                        return resource ? `
+                            <span>${req.amount}</span>
+                            <img src="${resource.image}" alt="${req.resource}" style="width: 25px; height: 25px;">
+                        ` : '';
+                    }).join('');
+
+                    collectionItem.innerHTML = `
+                        <div>
+                            <span>${collection.name}</span>
+                            <div>Required: ${requiredResourcesHTML}</div>
+                        </div>
+                        <div class="pack-purchase-container">
+                            <div class="gem-cost">💎 ${collection.gemReward}</div>
+                            <button onclick="game.completeCollection('${id}')" 
+                                ${!canComplete || collection.completed ? 'disabled' : ''}>
+                                ${collection.completed ? 'Completed' : 'Complete'}
+                            </button>
+                        </div>
+                    `;
+                    collectionsList.appendChild(collectionItem);
+                });
+            }
+
+            completeCollection(collectionId) {
+                const collection = this.collections[collectionId];
+        
+                // Double-check completion conditions
+                const canComplete = collection.requiredResources.every(req => 
+                    (this.resources[req.resource]?.amount || 0) >= req.amount
+                );
+
+                if (canComplete && !collection.completed) {
+
+                    // Add rewards
+                    this.gems += collection.gemReward;
+                    this.level += 1;
+
+                    // Mark collection as completed
+                    collection.completed = true;
+
+                    this.updateUI();
+                    this.saveGameState();
+                }
+            }
+
+            renderResources() {
+                // Count unique resources in inventory
+                const uniqueResourcesInInventory = Object.values(this.resources)
+                    .filter(resource => resource.amount > 0).length;
+
+                // Count total unique resources in the game
+                const totalUniqueResources = Object.keys(this.resources).length;
+
+                const resourcesList = document.getElementById('resources-list');
+                resourcesList.innerHTML = ``;
+
+                // Modify the preceding sibling (the h2) to include the count
+                const inventoryHeader = document.querySelector('#resources h2');
+                inventoryHeader.innerHTML = `Inventory 
+                    <span style="color: #666; font-size: 0.6em; margin-left: 10px;">
+                        ${uniqueResourcesInInventory}/${totalUniqueResources}
+                    </span>`;
+
+                Object.entries(this.resources).forEach(([name, resource]) => {
+                    if (resource.amount > 0) {
+                        const resourceItem = document.createElement('div');
+                        resourceItem.className = 'resource-item';
+
+                        // Determine rarity color
+                    const rarityColor = resource.rarity 
+                        ? (RARITY_COLORS[resource.rarity.toLowerCase()] || '#AAAAAA') 
+                        : '#AAAAAA';
+                        
+                        // Calculate dynamic font size based on name length
+                        const calculateFontSize = (name) => {
+                            if (name.length <= 6) return '18px';
+                            if (name.length <= 10) return '14px';
+                            if (name.length <= 14) return '11px';
+                            if (name.length <= 16) return '10px';
+                            return '12px';
+                        };
+
+                        resourceItem.innerHTML = `
+                            <img src="${resource.image}" alt="${name}">
+                            <span class="resource-name" style="font-size: ${calculateFontSize(name)};">${name}</span>
+                            <span class="resource-amount">${resource.amount}</span>
+                        `;
+
+                        // Add rarity border
+                        resourceItem.style.border = `2px solid ${rarityColor}`;
+
+                        resourcesList.appendChild(resourceItem);
+                    }
+                });
+            }
+
+            renderBlocks() {
+                const blocksList = document.getElementById('blocks-list');
+                blocksList.innerHTML = '';
+
+                // Filter blocks based on conditions
+                const availableBlocks = Object.entries(this.blocks).filter(([name, block]) => 
+                    this.checkBlockVisibility(block)
+                );
+
+                availableBlocks.forEach(([name, block]) => {
+                    const blockItem = document.createElement('div');
+                    blockItem.className = 'block-item';
+                    
+                    const dropsHTML = block.drops ? block.drops.map(drop => {
+                        const dropResource = this.resources[drop.resource];
+                        return dropResource ? `
+                            <img src="${dropResource.image}" alt="${drop.resource}" style="width: 25px; height: 25px;">
+                        ` : '';
+                    }).join('') : '';
+
+                    // Check block breaking conditions
+                    const canBreakBlock = this.checkBlockBreakConditions(block);
+
+                    blockItem.innerHTML = `
+                        <img src="${block.image}" alt="${name}">
+                        <div>
+                            <span>${name}</span>
+                            <div>Break Time: ${block.breakTime}s</div>
+                            <div>Drops: ${dropsHTML}</div>
+                        </div>
+                        <button onclick="game.gatherResource('${block.id}')" 
+                            ${!canBreakBlock || this.blockBreakingProgress[block.id] ? 'disabled' : ''}>
+                            ${this.blockBreakingProgress[block.id] ? 'Breaking...' : 'Break'}
+                        </button>
+                        <div class="progress-bar" style="display: ${this.blockBreakingProgress[block.id] ? 'block' : 'none'}">
+                            <div class="progress" style="width: ${this.blockBreakingProgress[block.id]?.progress || 0}%"></div>
+                        </div>
+                    `;
+                    blocksList.appendChild(blockItem);
+                });
+            }
+
+            checkBlockVisibility(block) {
+                // If no conditions, block is always visible
+                if (!block.conditions) return true;
+
+                // Check all visibility conditions
+                return block.conditions.every(condition => {
+                    const currentAmount = this.resources[condition.resource]?.amount || 0;
+                    
+                    switch(condition.type) {
+                        case 'min':
+                            return currentAmount >= condition.amount;
+                        case 'max':
+                            return currentAmount <= condition.amount;
+                        case 'exact':
+                            return currentAmount === condition.amount;
+                        default:
+                            return false;
+                    }
+                });
+            }
+
+            checkBlockBreakConditions(block) {
+                // If no conditions, it can always be broken
+                if (!block.conditions) return true;
+
+                // Check all conditions
+                return block.conditions.every(condition => {
+                    const currentAmount = this.resources[condition.resource]?.amount || 0;
+                    
+                    switch(condition.type) {
+                        case 'min':
+                            return currentAmount >= condition.amount;
+                        case 'max':
+                            return currentAmount <= condition.amount;
+                        case 'exact':
+                            return currentAmount === condition.amount;
+                        default:
+                            return false;
+                    }
+                });
+            }
+
+            renderCrafting(searchTerm = '') {
+                const craftingList = document.getElementById('crafting-list');
+                craftingList.innerHTML = '';
+
+                // Filter recipes based on both search term and visibility conditions
+                const filteredRecipes = Object.entries(this.recipes)
+                    .filter(([name, recipe]) => {
+                        // Check visibility conditions first
+                        const meetsConditions = this.checkRecipeVisibility(recipe);
+            
+                        // Then apply search filter
+                        const matchesSearch = searchTerm === '' || 
+                            recipe.outputResource.toLowerCase().includes(searchTerm);
+            
+                        return meetsConditions && matchesSearch;
+                    });
+
+                filteredRecipes.forEach(([name, recipe]) => {
+                    const recipeItem = document.createElement('div');
+                    recipeItem.className = 'recipe-item';
+                    
+                    const canCraft = recipe.ingredients.every(ing => 
+                        (this.resources[ing.resource]?.amount || 0) >= ing.amount
+                    );
+
+                    recipeItem.innerHTML = `
+                        <img src="${recipe.image}" alt="${name}">
+                        <div>
+                            <span>${name}</span>
+                            <div>
+                                Ingredients: ${recipe.ingredients.map(ing => 
+                                    `${ing.amount} ${ing.resource}`
+                                ).join(', ')}
+                            </div>
+                        </div>
+                        <button onclick="game.craftResource('${recipe.id}')" ${!canCraft ? 'disabled' : ''}>
+                            Craft (${recipe.outputAmount} ${recipe.outputResource})
+                        </button>
+                    `;
+                    craftingList.appendChild(recipeItem);
+                });
+            }
+
+            checkRecipeVisibility(recipe) {
+                // If no conditions, recipe is always visible
+                if (!recipe.conditions) return true;
+
+                // Check all visibility conditions
+                return recipe.conditions.every(condition => {
+                    const currentAmount = this.resources[condition.resource]?.amount || 0;
+        
+                    switch(condition.type) {
+                        case 'min':
+                            return currentAmount >= condition.amount;
+                     case 'max':
+                            return currentAmount <= condition.amount;
+                        case 'exact':
+                            return currentAmount === condition.amount;
+                        default:
+                            return false;
+                    }
+                });
+            }
+
+            extractDominantColors(imageSrc) {
+                // Create a temporary canvas to analyze image colors
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.src = imageSrc;
+
+                return new Promise((resolve) => {
+                    img.onload = () => {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                        // Sample pixels across the image
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const pixels = imageData.data;
+                        const colorCounts = {};
+
+                        // Sample pixels, skipping alpha channel
+                        for (let i = 0; i < pixels.length; i += 4) {
+                            const r = pixels[i];
+                            const g = pixels[i + 1];
+                            const b = pixels[i + 2];
+                            const color = `rgb(${r},${g},${b})`;
+
+                            // Ignore very dark or very light colors
+                            const brightness = (r + g + b) / 3;
+                            if (brightness > 30 && brightness < 220) {
+                                colorCounts[color] = (colorCounts[color] || 0) + 1;
+                            }
+                        }
+
+                        // Sort colors by frequency and return top 2
+                        const sortedColors = Object.entries(colorCounts)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 2)
+                            .map(([color]) => color);
+
+                        resolve(sortedColors);
+                    };
+                });
+            }
+
+            createBlockBreakParticles(block, event) {
+                // Extract block image and create particles
+                const particlesContainer = document.createElement('div');
+                particlesContainer.style.position = 'fixed';
+                particlesContainer.style.top = '0';
+                particlesContainer.style.left = '0';
+                particlesContainer.style.width = '100%';
+                particlesContainer.style.height = '100%';
+                particlesContainer.style.pointerEvents = 'none';
+                particlesContainer.style.zIndex = '9999';
+                document.body.appendChild(particlesContainer);
+
+                this.extractDominantColors(block.image).then((colors) => {
+                    // Create multiple particles
+                    for (let i = 0; i < 20; i++) {
+                        const particle = document.createElement('div');
+                        particle.style.position = 'absolute';
+                        particle.style.width = '5px';
+                        particle.style.height = '5px';
+                        particle.style.borderRadius = '50%';
+            
+                        // Randomly select from the two dominant colors
+                        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                        // Position particles near cursor
+                        const spread = 50; // Spread of particles
+                        particle.style.left = `${event.clientX + (Math.random() * spread - spread/2)}px`;
+                        particle.style.top = `${event.clientY + (Math.random() * spread - spread/2)}px`;
+
+                        // Animate particle
+                        particle.animate([
+                            { 
+                                transform: 'scale(1) translate(0, 0)', 
+                                opacity: 1 
+                            },
+                            { 
+                                transform: `scale(0.5) translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`, 
+                                opacity: 0 
+                            }
+                        ], {
+                            duration: 1000,
+                            easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
+                        });
+
+                        particlesContainer.appendChild(particle);
+
+                        // Remove particle after animation
+                        setTimeout(() => {
+                            particlesContainer.removeChild(particle);
+                            if (particlesContainer.children.length === 0) {
+                                document.body.removeChild(particlesContainer);
+                            }
+                        }, 800);
+                    }
+                });
+            }
+
+            createFloatingResourceNotification(resourceName, amount) {
+
+                if (amount <= 0) return;
+
+                // Find the resource to get its rarity
+                const resource = Object.entries(this.resources).find(([key, r]) => 
+                    r.name === resourceName || key === resourceName
+                )?.[1];
+
+                 // Determine rarity color
+                const rarityColor = resource && resource.rarity 
+                    ? (RARITY_COLORS[resource.rarity.toLowerCase()] || '#AAAAAA') 
+                    : '#AAAAAA';
+
+                // Create the notification container if it doesn't exist
+                let notificationContainer = document.getElementById('resource-notification-container');
+                if (!notificationContainer) {
+                    notificationContainer = document.createElement('div');
+                    notificationContainer.id = 'resource-notification-container';
+                    notificationContainer.style.position = 'fixed';
+                    notificationContainer.style.bottom = '20px';
+                    notificationContainer.style.right = '20px';
+                    notificationContainer.style.zIndex = '10000';
+                    notificationContainer.style.display = 'flex';
+                    notificationContainer.style.flexDirection = 'column-reverse';
+                    notificationContainer.style.alignItems = 'flex-end';
+                    document.body.appendChild(notificationContainer);
+                }
+
+                // Create individual notification
+                const notification = document.createElement('div');
+                notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                notification.style.color = rarityColor;
+                notification.style.padding = '10px 15px';
+                notification.style.borderRadius = '8px';
+                notification.style.fontSize = '16px';
+                notification.style.margin = '5px 0';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                notification.style.transition = 'all 0.5s ease-out';
+
+                notification.textContent = `+${amount} ${resourceName}`;
+
+                // Add to container
+                notificationContainer.appendChild(notification);
+
+                // Trigger reflow to enable transition
+                notification.offsetHeight;
+
+                // Animate in
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+
+                // Auto-remove after duration
+                const removeNotification = () => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
+        
+                    setTimeout(() => {
+                        notificationContainer.removeChild(notification);
+            
+                        // Remove container if no notifications left
+                        if (notificationContainer.children.length === 0) {
+                            document.body.removeChild(notificationContainer);
+                        }
+                    }, 500);
+                };
+
+                // Remove after 2 seconds
+                setTimeout(removeNotification, 2000);
+            }
+
+            // Method to create multiple notifications (optional, but useful)
+            createResourceNotifications(resourceNotifications) {
+                resourceNotifications.forEach(notification => {
+                    this.createFloatingResourceNotification(
+                        notification.resource, 
+                        notification.amount
+                    );
+                });
+            }
+            
+
+            gatherResource(blockId) {
+                const block = Object.values(this.blocks).find(b => b.id === blockId);
+                
+                if (!block || this.blockBreakingProgress[blockId] || !this.checkBlockBreakConditions(block)) return;
+
+                // Create particles near cursor
+                this.createBlockBreakParticles(block, event);
+
+                this.blockBreakingProgress[blockId] = { 
+                    progress: 0, 
+                    startTime: Date.now() 
+                };
+
+                const breakInterval = setInterval(() => {
+                    const currentProgress = this.blockBreakingProgress[blockId];
+                    const elapsedTime = (Date.now() - currentProgress.startTime) / 1000;
+                    const progressPercentage = Math.min(100, (elapsedTime / block.breakTime) * 100);
+
+                    if (progressPercentage >= 100) {
+                        clearInterval(breakInterval);
+
+                        // Notifications for resources gained
+                        const resourceNotifications = [];
+                        
+                        // Add primary resource if exists
+                        if (block.resourceGained) {
+                            this.resources[block.resourceGained].amount += block.resourceAmount || 0;
+                            resourceNotifications.push({ 
+                                resource: block.resourceGained, 
+                                amount: block.resourceAmount 
+                            });
+                        }
+
+                        // Handle chance-based drops
+                        if (block.drops) {
+                            block.drops.forEach(drop => {
+                                if (Math.random() < drop.chance) {
+                                    this.resources[drop.resource].amount += drop.amount;
+                                    resourceNotifications.push({ 
+                                        resource: drop.resource, 
+                                        amount: drop.amount 
+                                    });
+                                }
+                            });
+                        }
+
+                        // Create notifications for all resources gained
+                        resourceNotifications.forEach(notification => {
+                            this.createFloatingResourceNotification(
+                                notification.resource, 
+                                notification.amount
+                            );
+                        });
+
+                        // Remove resource if specified
+                        if (block.removeResource) {
+                            this.resources[block.removeResource.resource].amount -= block.removeResource.amount;
+                        }
+
+                        // Award random Gems within range
+                        if (block.gemRange) {
+                            const [min, max] = block.gemRange;
+                            const gemsEarned = Math.floor(Math.random() * (max - min + 1)) + min;
+                            this.gems += gemsEarned;
+                        }
+
+                        // Play the block's audio
+                        if (block.audio) {
+                            this.playAudio(block.audio);
+                        }
+
+                        delete this.blockBreakingProgress[blockId];
+                        this.updateUI();
+                        this.saveGameState();
+                    } else {
+                        this.blockBreakingProgress[blockId].progress = progressPercentage;
+                        this.renderBlocks();
+                    }
+                }, 50);
+            }
+
+            craftResource(recipeId) {
+                // Get the current search term before crafting
+                const currentSearchTerm = document.getElementById('recipe-search-input').value.toLowerCase();
+
+                const recipe = Object.values(this.recipes).find(r => r.id === recipeId);
+                if (recipe) {
+                    // Check if all ingredients are available
+                    const canCraft = recipe.ingredients.every(ing => 
+                        (this.resources[ing.resource]?.amount || 0) >= ing.amount
+                    );
+
+                    if (canCraft) {
+                        // Deduct ingredients
+                        recipe.ingredients.forEach(ing => {
+                            this.resources[ing.resource].amount -= ing.amount;
+                        });
+
+                        // Add crafted resource
+                        this.resources[recipe.outputResource].amount += recipe.outputAmount;
+
+                        this.updateUI();
+                        this.saveGameState();
+
+                        // Re-apply the search filter after crafting
+                        this.renderCrafting(currentSearchTerm);
+                    }
+                }
+            }
+
+            updateUI() {
+                document.getElementById('gem-balance').innerHTML = 
+                    `💎 Gems: ${this.gems}<br>🔰 Level: ${this.level}`;
+                    
+                this.renderResources();
+                this.renderBlocks();
+                this.renderCrafting();
+                this.renderShop();
+                this.renderCollections(); // Add this
+            }
+        }
+
+        // Initialize the game
+        const game = new ResourceGatheringGame();
+    </script>
+</body>
+</html>
