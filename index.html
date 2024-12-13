@@ -240,29 +240,26 @@
                 const savedGems = localStorage.getItem('gameGems');
                 this.gems = savedGems ? parseInt(savedGems, 10) : INITIAL_GEMS;
 
-                // Create a merged resources object that includes both saved and new initial resources
+                // Start with an empty resources object
                 const mergedResources = { ...JSON.parse(JSON.stringify(INITIAL_RESOURCES)) };
 
-                if (savedResources) {
-                    const parsedSavedResources = JSON.parse(savedResources);
-        
-                    console.log('Parsed Saved Resources:', parsedSavedResources);
+            if (savedResources) {
+                const parsedSavedResources = JSON.parse(savedResources);
 
-                    Object.entries(parsedSavedResources).forEach(([resourceName, savedResource]) => {
-                        console.log(`Processing resource: ${resourceName}`);
-            
-                        if (mergedResources[resourceName]) {
-                            console.log(`Updating existing resource: ${resourceName}`);
-                            mergedResources[resourceName] = {
-                                ...mergedResources[resourceName],
-                                amount: savedResource.amount
-                            };
-                        } else {
-                            console.log(`Adding new resource: ${resourceName}`);
-                            mergedResources[resourceName] = savedResource;
-                        }
-                    });
-                }
+                Object.entries(parsedSavedResources).forEach(([resourceName, savedResource]) => {
+                    // If resource exists in saved data but not in initial resources, 
+                    // add it to merged resources
+                    if (!mergedResources[resourceName]) {
+                        mergedResources[resourceName] = savedResource;
+                    } else {
+                        // Update existing resource's amount from saved data
+                        mergedResources[resourceName] = {
+                            ...mergedResources[resourceName],
+                            amount: savedResource.amount
+                        };
+                    }
+                });
+            }
 
                  // Force save to update localStorage with new resources
                 localStorage.setItem('gameResources', JSON.stringify(mergedResources));
