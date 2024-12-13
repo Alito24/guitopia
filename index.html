@@ -246,20 +246,20 @@
             if (savedResources) {
                 const parsedSavedResources = JSON.parse(savedResources);
 
+                // Merge saved resources with initial resources
                 Object.entries(parsedSavedResources).forEach(([resourceName, savedResource]) => {
-                    // If resource exists in saved data but not in initial resources, 
-                    // add it to merged resources
-                    if (!mergedResources[resourceName]) {
+                    // If the resource exists in initial resources, update its amount
+                    if (mergedResources[resourceName]) {
+                        mergedResources[resourceName].amount = savedResource.amount || 0;
+                    } 
+                    // If the resource doesn't exist in initial resources but was in saved resources,
+                    // keep it (this allows for persistence of manually added resources)
+                    else if (!INITIAL_RESOURCES[resourceName]) {
                         mergedResources[resourceName] = savedResource;
-                    } else {
-                        // Update existing resource's amount from saved data
-                        mergedResources[resourceName] = {
-                            ...mergedResources[resourceName],
-                            amount: savedResource.amount
-                        };
                     }
                 });
             }
+
 
                  // Force save to update localStorage with new resources
                 localStorage.setItem('gameResources', JSON.stringify(mergedResources));
