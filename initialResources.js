@@ -327,5 +327,12 @@ const INITIAL_RESOURCES = {
         rarity: 'uncommon',
         image: 'img/rope.png',
         amount: 0
+    },
+    'Well': {
+        id: 'well',
+        displayName: 'Well',
+        rarity: 'uncommon',
+        image: 'img/well.png',
+        amount: 0
     }
 };
