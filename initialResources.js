@@ -334,12 +334,5 @@ const INITIAL_RESOURCES = {
         rarity: 'uncommon',
         image: 'img/well.png',
         amount: 0
-    },
-    'Air': {
-        id: 'air',
-        displayName: 'Air',
-        rarity: 'common',
-        image: 'img/air.png',
-        amount: 99
     }
 };
