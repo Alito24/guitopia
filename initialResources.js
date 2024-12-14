@@ -1,4 +1,3 @@
-console.log('INITIAL_RESOURCES loaded:', INITIAL_RESOURCES);
 
 const INITIAL_RESOURCES = {
     'Dirt': { 
