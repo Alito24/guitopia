@@ -365,9 +365,16 @@
                 const shopList = document.getElementById('shop-list');
                 shopList.innerHTML = '';
 
-                Object.entries(this.shopPacks).forEach(([name, pack]) => {
+                // Filter shop packs based on player's level
+                const availableShopPacks = Object.entries(this.shopPacks)
+                    .filter(([name, pack]) => 
+                        // Only show packs where the player's level meets or exceeds the pack's level requirement
+                        !pack.level || this.level >= pack.level
+                    );
+
+                availableShopPacks.forEach(([name, pack]) => {
                     const packItem = document.createElement('div');
-                    packItem.className = 'block-item'; // Reuse block-item styling
+                    packItem.className = 'block-item';
 
                     const contentHTML = pack.content.map(content => {
                         const contentResource = this.resources[content.resource];
@@ -380,13 +387,16 @@
                         <img src="${pack.image}" alt="${name}">
                         <div>
                             <span>${pack.name}</span>
+                            <div>🔰 Level: ${pack.level || 0}</div>
                             <div>Content: ${contentHTML}</div>
                         </div>
                         <div class="pack-purchase-container">
                             <div class="gem-cost">💎 ${pack.gemCost}</div>
                             <button onclick="game.buyPack('${pack.id}')" 
-                                ${this.gems < pack.gemCost ? 'disabled' : ''}>
-                                Buy
+                                ${this.gems < pack.gemCost || (pack.level && this.level < pack.level) ? 'disabled' : ''}>
+                                ${pack.level && this.level < pack.level 
+                                    ? `Requires Level ${pack.level}` 
+                                    : 'Buy'}
                             </button>
                         </div>
                     `;
