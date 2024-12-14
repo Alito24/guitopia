@@ -450,6 +450,7 @@ const INITIAL_RECIPES = {
         ingredients: [
             { resource: 'Microwave', amount: 1 },
             { resource: 'Brown Block', amount: 2 },
+            { resource: 'Water Bucket', amount: 3 }
         ],
         conditions: [
             { resource: 'Microwave', type: 'min', amount: 1 },
