@@ -3,6 +3,7 @@ const INITIAL_SHOP_PACKS = {
         id: 'starter_pack',
         name: 'Starter Pack',
         image: 'img/tree.png',
+        level: 0,
         gemCost: 50,
         content: [
             { resource: 'Dirt', chance: 1, amount: 30 },
@@ -14,6 +15,7 @@ const INITIAL_SHOP_PACKS = {
         id: 'flower_pack',
         name: 'Flower Pack',
         image: 'img/rose.png',
+        level: 1,
         gemCost: 150,
         content: [
             { resource: 'Rose', chance: 1, amount: 8 },
