@@ -23,5 +23,20 @@ const INITIAL_SHOP_PACKS = {
             { resource: 'Poppy', chance: 0.75, amount: 3 },
             { resource: 'Sunflower', chance: 0.5, amount: 1 }
         ]
+    },
+    'basic_block_pack': {
+        id: 'basic_block_pack',
+        name: 'Basic Block Pack',
+        image: 'img/red_block.png',
+        level: 2,
+        gemCost: 500,
+        content: [
+            { resource: 'Red Block', chance: 1, amount: 20 },
+            { resource: 'White Block', chance: 1, amount: 20 },
+            { resource: 'Blue Block', chance: 1, amount: 15 },
+            { resource: 'Bricks', chance: 1, amount: 5 },
+            { resource: 'Purple Block', chance: 0.5, amount: 10 },
+            { resource: 'Brown Block', chance: 0.25, amount: 5 }
+        ]
     }
 };
