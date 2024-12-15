@@ -335,5 +335,26 @@ const INITIAL_RESOURCES = {
         rarity: 'uncommon',
         image: 'img/well.png',
         amount: 0
+    },
+    'Stalagmite': {
+        id: 'stalagmite',
+        displayName: 'Stalagmite',
+        rarity: 'commopn',
+        image: 'img/stalagmite.png',
+        amount: 0
+    },
+    'Clay': {
+        id: 'clay',
+        displayName: 'Clay',
+        rarity: 'common',
+        image: 'img/clay.png',
+        amount: 0
+    },
+    'Bricks': {
+        id: 'bricks',
+        displayName: 'Bricks',
+        rarity: 'common',
+        image: 'img/bricks.png',
+        amount: 0
     }
 };
