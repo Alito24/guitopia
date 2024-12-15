@@ -116,7 +116,10 @@ const INITIAL_BLOCKS = {
         breakTime: 0.75,
         resourceAmount: 2,
         gemRange: [2, 3],
-        audio: 'sfx/rock.ogg'
+        audio: 'sfx/rock.ogg',
+        conditions: [
+            { resource: 'Cave Blast', amount: 1, type: 'min' }
+        ]
     },
     'Lava': {
         id: 'lava-block',
