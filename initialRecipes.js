@@ -400,6 +400,34 @@ const INITIAL_RECIPES = {
         outputResource: 'Bush',
         outputAmount: 5
     },
+    'Clay Recipe': {
+        id: 'clay-recipe',
+        displayName: 'Clay Recipe',
+        image: 'img/clay.png',
+        ingredients: [
+            { resource: 'Dirt Mound', amount: 4 },
+            { resource: 'Water Bucket', amount: 1 }
+        ],
+        conditions: [
+            { resource: 'Water Bucket', type: 'min', amount: 1 },
+        ],
+        outputResource: 'Clay',
+        outputAmount: 4
+    },
+    'Bricks Recipe': {
+        id: 'bricks-recipe',
+        displayName: 'Bricks Recipe',
+        image: 'img/bricks.png',
+        ingredients: [
+            { resource: 'Clay', amount: 4 }
+        ],
+        conditions: [
+            { resource: 'Forge', type: 'min', amount: 1 },
+            { resource: 'Clay', type: 'min', amount: 1 }
+        ],
+        outputResource: 'Bricks',
+        outputAmount: 1
+    },
     'Microwave Recipe': {
         id: 'microwave-recipe',
         displayName: 'Microwave Recipe',
