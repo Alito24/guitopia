@@ -108,6 +108,16 @@ const INITIAL_BLOCKS = {
         gemRange: [2, 4],
         audio: 'sfx/rock.ogg'
     },
+    'Stalagmite': {
+        id: 'stalagmite-block',
+        displayName: 'stalagmite',
+        image: 'img/stalagmite.png',
+        resourceGained: 'Rock',
+        breakTime: 0.75,
+        resourceAmount: 2,
+        gemRange: [2, 3],
+        audio: 'sfx/rock.ogg'
+    },
     'Lava': {
         id: 'lava-block',
         displayName: 'lava',
