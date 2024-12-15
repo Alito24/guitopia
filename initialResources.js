@@ -217,6 +217,13 @@ const INITIAL_RESOURCES = {
         image: 'img/wooden_pickaxe.png',
         amount: 0
     },
+    'Stone Pickaxe': {
+        id: 'stone_pickaxe',
+        displayName: 'Stone Pickaxe',
+        rarity: 'uncommon',
+        image: 'img/stone_pickaxe.png',
+        amount: 0
+    },
     'Coal': {
         id: 'coal',
         displayName: 'Coal',
