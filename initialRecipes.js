@@ -358,6 +358,22 @@ const INITIAL_RECIPES = {
         outputResource: 'Wooden Pickaxe',
         outputAmount: 1
     },
+    'Stone Pickaxe Recipe': {
+        id: 'stone-pickaxe-recipe',
+        displayName: 'Stone Pickaxe Recipe',
+        image: 'img/stone_pickaxe.png',
+        ingredients: [
+            { resource: 'Wooden Pickaxe', amount: 1 },
+            { resource: 'Rope', amount: 2 },
+            { resource: 'Rock', amount: 30 },
+            { resource: 'Bricks', amount: 12 }
+        ],
+        conditions: [
+            { resource: 'Wooden Pickaxe', type: 'min', amount: 1 },
+        ],
+        outputResource: 'Stone Pickaxe',
+        outputAmount: 1
+    },
     'Wooden Axe Recipe': {
         id: 'wooden-axe-recipe',
         displayName: 'Wooden Axe Recipe',
