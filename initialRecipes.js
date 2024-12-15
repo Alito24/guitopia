@@ -363,7 +363,8 @@ const INITIAL_RECIPES = {
         displayName: 'Stone Pickaxe Recipe',
         image: 'img/stone_pickaxe.png',
         ingredients: [
-            { resource: 'Wooden Pickaxe', amount: 1 },
+            { resource: 'Wood Rod', amount: 2 },
+            { resource: 'Logs', amount: 8 },
             { resource: 'Rope', amount: 2 },
             { resource: 'Rock', amount: 30 },
             { resource: 'Bricks', amount: 12 }
