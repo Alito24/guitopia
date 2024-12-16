@@ -555,7 +555,7 @@ const INITIAL_RECIPES = {
             { resource: 'Purple Block', amount: 1 }
         ],
         conditions: [
-            { resource: 'Sunflowe', type: 'min', amount: 1 },
+            { resource: 'Sunflower', type: 'min', amount: 1 },
         ],
         outputResource: 'Lavender',
         outputAmount: 1
