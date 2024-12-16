@@ -502,63 +502,6 @@ const INITIAL_RECIPES = {
         ],
         outputResource: 'Coffee Machine',
         outputAmount: 1
-    },
-    'Pebbles': {
-        id: 'pebbles-recipe',
-        displayName: 'Pebbles Recipe',
-        image: 'img/pebbles.png',
-        ingredients: [
-            { resource: 'Dirt Mound', amount: 1 },
-            { resource: 'Rock', amount: 1 },
-            { resource: 'Obsidian', amount: 1 }
-        ],
-        conditions: [
-            { resource: 'Obsidian', type: 'min', amount: 1 },
-        ],
-        outputResource: 'Pebbles',
-        outputAmount: 1
-    },
-    'Ceramic': {
-        id: 'ceramic-recipe',
-        displayName: 'Ceramic Recipe',
-        image: 'img/ceramic.png',
-        ingredients: [
-            { resource: 'Clay', amount: 2 },
-            { resource: 'Brown Block', amount: 1 }
-        ],
-        conditions: [
-            { resource: 'Clay', type: 'min', amount: 1 },
-        ],
-        outputResource: 'Ceramic',
-        outputAmount: 1
-    },
-    'Watering Can': {
-        id: 'watering-can-recipe',
-        displayName: 'Watering Can Recipe',
-        image: 'img/watering_can.png',
-        ingredients: [
-            { resource: 'Green Block', amount: 1 },
-            { resource: 'Water Bucket', amount: 1 }
-        ],
-        conditions: [
-            { resource: 'Water Bucket', type: 'min', amount: 1 },
-        ],
-        outputResource: 'Watering Can',
-        outputAmount: 1
-    },
-    'Lavender': {
-        id: 'lavender-recipe',
-        displayName: 'Lavender Recipe',
-        image: 'img/lavender.png',
-        ingredients: [
-            { resource: 'Sunflower', amount: 1 },
-            { resource: 'Purple Block', amount: 1 }
-        ],
-        conditions: [
-            { resource: 'Sunflower', type: 'min', amount: 1 },
-        ],
-        outputResource: 'Lavender',
-        outputAmount: 1
     }
     
 };
