@@ -36,5 +36,19 @@ const INITIAL_COLLECTIONS = {
         ],
         gemReward: 750,
         completed: false
+    },
+    'neighbour-garden': {
+        id: 'neighbour-garden',
+        name: 'Neighbour Garden',
+        requiredResources: [
+            { resource: 'Pebbles', amount: 20 },
+            { resource: 'Grass', amount: 50 },
+            { resource: 'Bush', amount: 15 }
+            { resource: 'Lavender', amount: 10 },
+            { resource: 'Potted Plant', amount: 2 },
+            { resource: 'Watering Can', amount: 1 }
+        ],
+        gemReward: 1000,
+        completed: false
     }
 };
