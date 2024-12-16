@@ -23,7 +23,7 @@ const INITIAL_COLLECTIONS = {
             { resource: 'Blue Block', amount: 1 },
             { resource: 'Purple Block', amount: 1 }
         ],
-        gemReward: 1500,
+        gemReward: 500,
         completed: false
     },
     'good-morning': {
@@ -34,7 +34,7 @@ const INITIAL_COLLECTIONS = {
             { resource: 'Wooden Chair', amount: 1 },
             { resource: 'Wooden Table', amount: 1 }
         ],
-        gemReward: 2000,
+        gemReward: 750,
         completed: false
     }
 };
