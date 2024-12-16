@@ -43,7 +43,7 @@ const INITIAL_COLLECTIONS = {
         requiredResources: [
             { resource: 'Pebbles', amount: 20 },
             { resource: 'Grass', amount: 50 },
-            { resource: 'Bush', amount: 15 }
+            { resource: 'Bush', amount: 15 },
             { resource: 'Lavender', amount: 10 },
             { resource: 'Potted Plant', amount: 2 },
             { resource: 'Watering Can', amount: 1 }
