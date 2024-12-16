@@ -363,5 +363,40 @@ const INITIAL_RESOURCES = {
         rarity: 'common',
         image: 'img/bricks.png',
         amount: 0
+    },
+    'Pebbles': {
+        id: 'pebbles',
+        displayName: 'Pebbles',
+        rarity: 'common',
+        image: 'img/pebbles.png',
+        amount: 0
+    },
+    'Lavender': {
+        id: 'lavender',
+        displayName: 'Lavender',
+        rarity: 'uncommon',
+        image: 'img/lavender.png',
+        amount: 0
+    },
+    'Ceramic': {
+        id: 'ceramic',
+        displayName: 'Ceramic',
+        rarity: 'uncommon',
+        image: 'img/ceramic.png',
+        amount: 0
+    },
+    'Watering Can': {
+        id: 'watering_can',
+        displayName: 'Watering Can',
+        rarity: 'common',
+        image: 'img/watering_can.png',
+        amount: 0
+    },
+    'Potted Plant': {
+        id: 'potted_plant',
+        displayName: 'Potted Plant',
+        rarity: 'uncommon',
+        image: 'img/potted_plant.png',
+        amount: 0
     }
 };
