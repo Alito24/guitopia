@@ -559,6 +559,21 @@ const INITIAL_RECIPES = {
         ],
         outputResource: 'Lavender',
         outputAmount: 1
+    },
+    'Potted Plant': {
+        id: 'potted-plant-recipe',
+        displayName: 'Potted Plant Recipe',
+        image: 'img/potted_plant.png',
+        ingredients: [
+            { resource: 'Ceramic', amount: 1 },
+            { resource: 'Grass', amount: 1 },
+            { resource: 'Dirt Mound', amount: 5 }
+        ],
+        conditions: [
+            { resource: 'Ceramic', type: 'min', amount: 1 },
+        ],
+        outputResource: 'Potted Plant',
+        outputAmount: 1
     }
     
 };
