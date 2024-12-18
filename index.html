@@ -359,6 +359,7 @@
                 this.renderCrafting();
                 this.renderShop();
                 this.renderCollections();
+                this.initCollectionTreeLogging();
             }
 
             renderShop() {
@@ -990,6 +991,65 @@
                     }
                 }
             }
+
+            // Add this method to the ResourceGatheringGame class
+            function getCraftingTree(resourceName, indent = '') {
+                const craftingSteps = [];
+    
+                // Find all recipes that create this resource
+                const recipesForResource = Object.values(this.recipes).filter(recipe => 
+                    recipe.outputResource === resourceName
+                );
+    
+                if (recipesForResource.length === 0) {
+                    craftingSteps.push(`${indent}${resourceName} (Base Resource)`);
+                    return craftingSteps;
+                }
+    
+                recipesForResource.forEach((recipe, index) => {
+                    // Add the current recipe name
+                    craftingSteps.push(`${indent}${resourceName} (via ${recipe.displayName})`);
+        
+                    // Add recipe requirements
+                    recipe.ingredients.forEach(ingredient => {
+                        // Recursively get crafting steps for each ingredient
+                        const subSteps = this.getCraftingTree(ingredient.resource, indent + '  ');
+                        craftingSteps.push(`${indent}  Requires ${ingredient.amount}x:`);
+                        craftingSteps.push(...subSteps);
+                    });
+        
+                    // Add separator between multiple recipes
+                    if (index < recipesForResource.length - 1) {
+                        craftingSteps.push(`${indent}--- OR ---`);
+                    }
+                });
+    
+                return craftingSteps;
+            }
+
+            // Add event listener setup to initEventListeners method
+            function initCollectionTreeLogging() {
+                const collectionsList = document.getElementById('collections-list');
+    
+                collectionsList.addEventListener('mousedown', (event) => {
+                    // Check if it's a middle click (button 1) on an image
+                    if (event.button === 1 && event.target.tagName === 'IMG') {
+                        event.preventDefault(); // Prevent default middle-click behavior
+            
+                        // Get the resource name from the image's alt text
+                        const resourceName = event.target.alt;
+            
+                        // Get and display the crafting tree
+                        const craftingTree = this.getCraftingTree(resourceName);
+            
+                        // Create a styled console group
+                        console.group(`🌳 Crafting Tree for ${resourceName}`);
+                        craftingTree.forEach(step => console.log(step));
+                        console.groupEnd();
+                    }
+                });
+            }
+
 
             updateUI() {
                 document.getElementById('gem-balance').innerHTML = 
