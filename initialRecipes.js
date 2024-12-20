@@ -460,7 +460,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Microwave',
         outputAmount: 1
     },
-    'Wooden Chair': {
+    'Wooden Chair Recipe': {
         id: 'wooden-chair-recipe',
         displayName: 'Wooden Chair Recipe',
         image: 'img/wooden_chair.png',
@@ -474,7 +474,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Wooden Chair',
         outputAmount: 1
     },
-    'Wooden Table': {
+    'Wooden Table Recipe': {
         id: 'wooden-table-recipe',
         displayName: 'Wooden Table Recipe',
         image: 'img/wooden_table.png',
@@ -488,7 +488,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Wooden Table',
         outputAmount: 1
     },
-    'Coffee Machine': {
+    'Coffee Machine Recipe': {
         id: 'coffee-machine-recipe',
         displayName: 'Coffee Machine Recipe',
         image: 'img/coffee_machine.png',
@@ -503,7 +503,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Coffee Machine',
         outputAmount: 1
     },
-    'Pebbles': {
+    'Pebbles Recipe': {
         id: 'pebbles-recipe',
         displayName: 'Pebbles Recipe',
         image: 'img/pebbles.png',
@@ -518,7 +518,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Pebbles',
         outputAmount: 1
     },
-    'Ceramic': {
+    'Ceramic Recipe': {
         id: 'ceramic-recipe',
         displayName: 'Ceramic Recipe',
         image: 'img/ceramic.png',
@@ -532,7 +532,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Ceramic',
         outputAmount: 1
     },
-    'Watering Can': {
+    'Watering Can Recipe': {
         id: 'watering-can-recipe',
         displayName: 'Watering Can Recipe',
         image: 'img/watering_can.png',
@@ -546,7 +546,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Watering Can',
         outputAmount: 1
     },
-    'Lavender': {
+    'Lavender Recipe': {
         id: 'lavender-recipe',
         displayName: 'Lavender Recipe',
         image: 'img/lavender.png',
@@ -560,7 +560,7 @@ const INITIAL_RECIPES = {
         outputResource: 'Lavender',
         outputAmount: 1
     },
-    'Potted Plant': {
+    'Potted Plant Recipe': {
         id: 'potted-plant-recipe',
         displayName: 'Potted Plant Recipe',
         image: 'img/potted_plant.png',
